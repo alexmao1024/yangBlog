@@ -2,71 +2,89 @@
 
 {% block title %}Post{% endblock %}
 
-{% block body %}
-    <h1>Post</h1>
+{% block content %}
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ post.id }}</td>
-            </tr>
-            <tr>
-                <th>Title</th>
-                <td>{{ post.title }}</td>
-            </tr>
-            <tr>
-                <th>Body</th>
-                <td>{{ post.body|raw }}</td>
-            </tr>
-            <tr>
-                <th>Summary</th>
-                <td>{{ post.summary }}</td>
-            </tr>
-            <tr>
-                <th>Status</th>
-                <td>{{ post.status }}</td>
-            </tr>
-            <tr>
-                <th>CreateAt</th>
-                <td>{{ post.createAt ? post.createAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>UpdateAt</th>
-                <td>{{ post.updateAt ? post.updateAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>PostImage</th>
-                <td>
-                    {% if post.postImage is not null%}
-                        <img src="{{ asset(post.postImage,'file_upload') }}" height="288" width="216">
-                    {% endif %}
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <!-- Title -->
+    <h1 class="mt-4">{{ post.title }}</h1>
 
-    <a href="{{ path('post_index') }}">back to list</a>
+    <!-- Author -->
+    <p class="lead">
+        by
+        <a href="#">Start Bootstrap</a>
+    </p>
 
-{#    {{ form(comment_form) }}#}
+    <hr>
 
-    {{ form_start(comment_form) }}
-    <div class="my-custom-class-for-errors">
-        {{ form_errors(comment_form) }}
-    </div>
+    <!-- Date/Time -->
+    <p>Posted on {{ post.createAt ? post.createAt|date('Y-m-d H:i:s') : '' }}</p>
 
-    <div class="row">
-        <div class="col">
+    <hr>
+
+    <!-- Preview Image -->
+    {% if post.postImage is not null%}
+        <img class="img-fluid rounded" alt="{{ post.title }}" src="{{ asset(post.postImage,'file_upload') }}" height="288" width="216">
+    {% endif %}
+
+    <hr>
+
+    <!-- Post Content -->
+    {{ post.body|raw }}
+    <hr>
+
+    <!-- Comments Form -->
+    <div class="card my-4">
+        <h5 class="card-header">Leave a Comment:</h5>
+        <div class="card-body">
+            {#    {{ form(comment_form) }}#}
+
+            {{ form_start(comment_form) }}
+            <div class="my-custom-class-for-errors">
+                {{ form_errors(comment_form) }}
+            </div>
             {{ form_row(comment_form.author) }}
-        </div>
-        <div class="col">
             {{ form_row(comment_form.email) }}
-        </div>
-        <div class="col">
             {{ form_row(comment_form.message) }}
+            {{ form_end(comment_form) }}
+
         </div>
     </div>
 
-    <button type="submit">提交</button>
-    {{ form_end(comment_form) }}
+    <!-- Single Comment -->
+    {% for comment in post.comments %}
+    <div class="media mb-4">
+        <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
+        <div class="media-body">
+            <h5 class="mt-0">{{ comment.author }}</h5>
+            {{ comment.message }}
+            <button class="btn btn-sm btn-link js-reply-comment-btn" data-post-id="{{ post.id }}" data-parent-id="{{ comment.id }}">回复</button>
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- Comment with nested comments -->
+{#    <div class="media mb-4">#}
+{#        <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">#}
+{#        <div class="media-body">#}
+{#            <h5 class="mt-0">Commenter Name</h5>#}
+{#            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.#}
+
+{#            <div class="media mt-4">#}
+{#                <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">#}
+{#                <div class="media-body">#}
+{#                    <h5 class="mt-0">Commenter Name</h5>#}
+{#                    Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.#}
+{#                </div>#}
+{#            </div>#}
+
+{#            <div class="media mt-4">#}
+{#                <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">#}
+{#                <div class="media-body">#}
+{#                    <h5 class="mt-0">Commenter Name</h5>#}
+{#                    Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.#}
+{#                </div>#}
+{#            </div>#}
+
+{#        </div>#}
+{#    </div>#}
+
 {% endblock %}

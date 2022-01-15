@@ -14,17 +14,17 @@ use Symfony\Component\Routing\Annotation\Route;
 class CommentController extends AbstractController
 {
     #[
-        Route('/post/{post_id}/comment/{comment_id}/replay', name: 'comment'),
+        Route('/post/{post_id}/comment/{comment_id}/reply', name: 'comment'),
         ParamConverter('post',options: ['id'=>'post_id']),
         ParamConverter('parentComment',options: ['id'=>'comment_id'])
     ]
-    public function replayComment(Request $request, Post $post,Comment $parentComment): Response
+    public function replyComment(Request $request, Post $post,Comment $parentComment): Response
     {
-        $replayComment = $this->createForm(CommentType::class,null,[
+        $replyComment = $this->createForm(CommentType::class,null,[
             'action'=>$request->getUri()
         ]);
-        return $this->render('comment/index.html.twig', [
-            'controller_name' => 'CommentController',
+        return $this->render('comment/_reply_comment_form.html.twig', [
+            'reply_comment_form' => $replyComment->createView()
         ]);
     }
 }

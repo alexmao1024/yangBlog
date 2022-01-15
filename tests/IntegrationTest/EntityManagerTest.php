@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\IntegrationTest;
+namespace App\Tests\FunctionTest\IntegrationTest;
 
 use App\Entity\Post;
 use App\Factory\PostFactory;
@@ -24,12 +24,11 @@ class EntityManagerTest extends KernelTestCase
 
     public function testEntityManager(): void
     {
-//        $kernel = self::bootKernel();
+
 
         $this->assertSame('test', self::$kernel->getEnvironment());
-//        $entitymanager = static::getContainer()->get('doctrine.orm.entity_manager');
+
         $this->assertInstanceOf(EntityManagerInterface::class, $this->entitymanager);
-        //$myCustomService = self::$container->get(CustomService::class);
 
         $factory = static::getContainer()->get(PostFactory::class);
         $this->assertInstanceOf(PostFactory::class, $factory);
@@ -62,18 +61,6 @@ class EntityManagerTest extends KernelTestCase
         $this->assertCount(3, $findByPosts);
 
     }
-
-//    public function testEntityManagerQuery():void
-//    {
-////        $kernel = self::bootKernel();
-//
-//        $postRepo = static::getContainer()->get(PostRepository::class);
-//
-//        $this->assertInstanceOf(PostRepository::class, $postRepo);
-//
-//        $posts = $postRepo->findAll();
-//        $this->assertCount(4, $posts);
-//    }
 
     public function testQueryBuilder(): void
     {

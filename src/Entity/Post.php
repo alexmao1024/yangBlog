@@ -33,8 +33,14 @@ class Post
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $updateAt;
 
-    #[ORM\OneToMany(mappedBy: 'post', targetEntity: Comment::class, orphanRemoval: true)]
+    #[
+        ORM\OneToMany(mappedBy: 'post', targetEntity: Comment::class, orphanRemoval: true),
+        ORM\OrderBy(["id"=>"DESC"])
+    ]
     private $comments;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $postImage;
 
     public function __construct()
     {
@@ -144,6 +150,18 @@ class Post
                 $comment->setPost(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPostImage(): ?string
+    {
+        return $this->postImage;
+    }
+
+    public function setPostImage(?string $postImage): self
+    {
+        $this->postImage = $postImage;
 
         return $this;
     }
