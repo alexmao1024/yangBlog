@@ -1,8 +1,18 @@
 {% extends 'base.html.twig' %}
+{% import 'macro.html.twig' as macros %}
 
 {% block title %}Post{% endblock %}
 
 {% block content %}
+
+    {# read and display all flash messages #}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert-{{ label }} mt-4 alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
 
     <!-- Title -->
     <h1 class="mt-4">{{ post.title }}</h1>
@@ -22,7 +32,7 @@
 
     <!-- Preview Image -->
     {% if post.postImage is not null%}
-        <img class="img-fluid rounded" alt="{{ post.title }}" src="{{ asset(post.postImage,'file_upload') }}" height="288" width="216">
+        <img class="img-fluid rounded" alt="{{ post.title }}" src="{{ asset(post.postImage,'file_upload') }}" >
     {% endif %}
 
     <hr>
@@ -50,17 +60,14 @@
     </div>
 
     <!-- Single Comment -->
-    {% for comment in post.comments %}
-    <div class="media mb-4">
-        <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
-        <div class="media-body">
-            <h5 class="mt-0">{{ comment.author }}</h5>
-            {{ comment.message }}
-            <button class="btn btn-sm btn-link js-reply-comment-btn" data-post-id="{{ post.id }}" data-parent-id="{{ comment.id }}">回复</button>
-        </div>
-    </div>
+    {% for comment in pagination %}
+        {{ macros.show_comments(comment,post) }}
     {% endfor %}
 
+    {# display navigation #}
+    <div class="navigation">
+        {{ knp_pagination_render(pagination) }}
+    </div>
     <!-- Comment with nested comments -->
 {#    <div class="media mb-4">#}
 {#        <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">#}

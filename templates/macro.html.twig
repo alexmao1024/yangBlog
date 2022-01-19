@@ -1,0 +1,14 @@
+{% macro show_comments(comment,post) %}
+    {% import _self as macro %}
+    <div class="media mb-4">
+        <img class="d-flex mr-3 rounded-circle" src="{{ asset('miemie.jpg','file_upload') }}" alt="miemie" height="69" width="69">
+        <div class="media-body">
+            <h5 class="mt-0">{{ comment.author }}</h5>
+            {{ comment.message }}
+            <button class="btn btn-sm btn-link js-reply-comment-btn" data-post-id="{{ post.id }}" data-parent-id="{{ comment.id }}">回复</button>
+            {% for childrenComment in comment.comments %}
+                {{ macro.show_comments(childrenComment,post) }}
+            {% endfor %}
+        </div>
+    </div>
+{% endmacro %}

@@ -5,24 +5,43 @@ namespace App\DataFixtures;
 use App\Factory\PostFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Faker\Factory;
 
 class PostFixtures extends Fixture
 {
+    public const LAST_POST = 'last_post';
     private PostFactory $postFactory;
+    private $faker;
 
     public function __construct(PostFactory $postFactory)
     {
         $this->postFactory = $postFactory;
+        $this->faker=Factory::create('zc_CN');
     }
 
     public function load(ObjectManager $manager,): void
     {
-        for ($i=0;$i<6;$i++)
+        $last_post = null;
+        for ($i=0;$i<20;$i++)
         {
-            $post = $this->postFactory->create('My Post 0' . $i, 'This is my No.' . $i . ' Post');
+            $post = $this->postFactory->create($this->faker->sentence(), $this->faker->paragraph());
+            if ($this->faker->boolean())
+            {
+                $post->setStatus('published');
+            }
+
+            $image = '00'.$this->faker->randomDigit().'.jpg';
+            $post->setPostImage($image);
+
+            if ($i == 19){
+                $post->setStatus('published');
+                $last_post = $post;
+            }
+
             $manager->persist($post);
         }
 
+        $this->addReference(self::LAST_POST,$last_post);
         $manager->flush();
     }
 }

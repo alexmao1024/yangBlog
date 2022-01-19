@@ -2,6 +2,9 @@
     "composer/package-versions-deprecated": {
         "version": "1.11.99.4"
     },
+    "dbrekelmans/bdi": {
+        "version": "1.0"
+    },
     "doctrine/annotations": {
         "version": "1.13",
         "recipe": {
@@ -106,11 +109,35 @@
             "ref": "b131e6cbfe1b898a508987851963fff485986285"
         }
     },
+    "fakerphp/faker": {
+        "version": "v1.17.0"
+    },
     "friendsofphp/proxy-manager-lts": {
         "version": "v1.0.5"
     },
+    "friendsofsymfony/jsrouting-bundle": {
+        "version": "3.1",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "2.3",
+            "ref": "a9f2e49180f75cdc71ae279a929c4b2e0638de84"
+        },
+        "files": [
+            "./config/routes/fos_js_routing.yaml"
+        ]
+    },
+    "knplabs/knp-components": {
+        "version": "v3.5.0"
+    },
+    "knplabs/knp-paginator-bundle": {
+        "version": "v5.8.0"
+    },
     "laminas/laminas-code": {
         "version": "4.5.1"
+    },
+    "monolog/monolog": {
+        "version": "2.3.5"
     },
     "myclabs/deep-copy": {
         "version": "1.10.2"
@@ -123,6 +150,9 @@
     },
     "phar-io/version": {
         "version": "3.1.0"
+    },
+    "php-webdriver/webdriver": {
+        "version": "1.12.0"
     },
     "phpdocumentor/reflection-common": {
         "version": "2.2.0"
@@ -267,6 +297,18 @@
     "symfony/css-selector": {
         "version": "v6.0.2"
     },
+    "symfony/debug-bundle": {
+        "version": "6.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "4.1",
+            "ref": "0ce7a032d344fb7b661cd25d31914cd703ad445b"
+        },
+        "files": [
+            "./config/packages/dev/debug.yaml"
+        ]
+    },
     "symfony/dependency-injection": {
         "version": "v6.0.2"
     },
@@ -331,6 +373,12 @@
             "./src/Kernel.php"
         ]
     },
+    "symfony/http-client": {
+        "version": "v6.0.2"
+    },
+    "symfony/http-client-contracts": {
+        "version": "v3.0.0"
+    },
     "symfony/http-foundation": {
         "version": "v6.0.2"
     },
@@ -352,8 +400,32 @@
     "symfony/mime": {
         "version": "v6.0.2"
     },
+    "symfony/monolog-bridge": {
+        "version": "v6.0.1"
+    },
+    "symfony/monolog-bundle": {
+        "version": "3.7",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "3.7",
+            "ref": "a7bace7dbc5a7ed5608dbe2165e0774c87175fe6"
+        },
+        "files": [
+            "./config/packages/dev/monolog.yaml",
+            "./config/packages/prod/deprecations.yaml",
+            "./config/packages/prod/monolog.yaml",
+            "./config/packages/test/monolog.yaml"
+        ]
+    },
     "symfony/options-resolver": {
         "version": "v6.0.0"
+    },
+    "symfony/panther": {
+        "version": "2.0",
+        "recipe": {
+            "version": "1.0"
+        }
     },
     "symfony/password-hasher": {
         "version": "v6.0.2"
@@ -393,6 +465,9 @@
     },
     "symfony/polyfill-uuid": {
         "version": "v1.24.0"
+    },
+    "symfony/process": {
+        "version": "v6.0.2"
     },
     "symfony/property-access": {
         "version": "v6.0.2"
@@ -438,6 +513,9 @@
         "version": "v6.0.1"
     },
     "symfony/security-http": {
+        "version": "v6.0.2"
+    },
+    "symfony/serializer": {
         "version": "v6.0.2"
     },
     "symfony/service-contracts": {
@@ -503,6 +581,20 @@
     "symfony/var-exporter": {
         "version": "v6.0.0"
     },
+    "symfony/web-profiler-bundle": {
+        "version": "6.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "3.3",
+            "ref": "6bdfa1a95f6b2e677ab985cd1af2eae35d62e0f6"
+        },
+        "files": [
+            "./config/packages/dev/web_profiler.yaml",
+            "./config/packages/test/web_profiler.yaml",
+            "./config/routes/dev/web_profiler.yaml"
+        ]
+    },
     "symfony/webpack-encore-bundle": {
         "version": "1.13",
         "recipe": {
@@ -539,5 +631,8 @@
     },
     "webmozart/assert": {
         "version": "1.10.0"
+    },
+    "willdurand/jsonp-callback-validator": {
+        "version": "v1.1.0"
     }
 }
