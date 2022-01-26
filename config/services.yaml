@@ -10,12 +10,20 @@ parameters:
     page_limit: 5
     locale: 'zh_CN'
 
+    project_dir: '%kernel.project_dir%'
+    strip_words:
+        - 'hello'
+        - 'world'
+    support_locales: en|zh_CN|fr
+
 services:
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
+        bind:
+            $projectDir: '%kernel.project_dir%'
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     App\:
@@ -31,3 +39,7 @@ services:
 
     App\Factory\PostFactory:
         public: ture
+
+    App\Listener\CommentSubmitListener:
+        tags:
+            - {name: 'kernel.event_listener', event: App\Event\AfterCommentSubmitEvent, method: 'onCommentSubmit', priority: 10}

@@ -3,13 +3,17 @@
 namespace App\Entity;
 
 use App\Repository\PostRepository;
+use App\Utils\DateTimeTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Post
 {
+    use DateTimeTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
@@ -27,12 +31,6 @@ class Post
     #[ORM\Column(type: 'string', length: 20, nullable: true)]
     private $status;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
-    private $createAt;
-
-    #[ORM\Column(type: 'datetime', nullable: true)]
-    private $updateAt;
-
     #[
         ORM\OneToMany(mappedBy: 'post', targetEntity: Comment::class, orphanRemoval: true),
         ORM\OrderBy(["id"=>"DESC"])
@@ -41,6 +39,10 @@ class Post
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $postImage;
+
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'posts')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $author;
 
     public function __construct()
     {
@@ -100,30 +102,6 @@ class Post
         return $this;
     }
 
-    public function getCreateAt(): ?\DateTimeInterface
-    {
-        return $this->createAt;
-    }
-
-    public function setCreateAt(?\DateTimeInterface $createAt): self
-    {
-        $this->createAt = $createAt;
-
-        return $this;
-    }
-
-    public function getUpdateAt(): ?\DateTimeInterface
-    {
-        return $this->updateAt;
-    }
-
-    public function setUpdateAt(?\DateTimeInterface $updateAt): self
-    {
-        $this->updateAt = $updateAt;
-
-        return $this;
-    }
-
     /**
      * @return Collection|Comment[]
      */
@@ -162,6 +140,23 @@ class Post
     public function setPostImage(?string $postImage): self
     {
         $this->postImage = $postImage;
+
+        return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->title;
+    }
+
+    public function getAuthor(): ?User
+    {
+        return $this->author;
+    }
+
+    public function setAuthor(?User $author): self
+    {
+        $this->author = $author;
 
         return $this;
     }

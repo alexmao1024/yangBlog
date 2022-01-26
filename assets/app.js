@@ -13,6 +13,8 @@ import './bootstrap';
 
 import 'bootstrap';
 
+import 'lightbox2';
+
 import $ from 'jquery';
 
 const routes = require('../public/js/fos_js_routes.json');
@@ -41,9 +43,26 @@ $(document).ready(function (){
         }
     })
 
-    $('button.js-add-file-row-btn').on('click', function (element) {
+    // $('button.js-add-file-row-btn').on('click', function (element) {
+    //     //查询input-wrapper DOM
+    //     var fileInputWrapper = $(element.target).closest('fieldset.form-group').find('div.input-row-wrapper');
+    //     //获取当前input行计数
+    //     var inputCount = fileInputWrapper.children().length;
+    //     //获取input prototype并进行序号修改
+    //     var inputCode = fileInputWrapper.data('prototype');
+    //     inputCode = inputCode.replace(/__name__/g, inputCount);
+    //
+    //     fileInputWrapper.append(inputCode);
+    // })
+
+    window.fixFileInputName = function (element) {
+        let fileName = $(element).val().split('\\').pop();
+        $(element).next('.custom-file-label').html(fileName);
+    }
+
+    window.addFileUpload = function (element) {
         //查询input-wrapper DOM
-        var fileInputWrapper = $(element.target).closest('fieldset.form-group').find('div.input-row-wrapper');
+        var fileInputWrapper = $(element).closest('fieldset.form-group').find('div.input-row-wrapper');
         //获取当前input行计数
         var inputCount = fileInputWrapper.children().length;
         //获取input prototype并进行序号修改
@@ -51,10 +70,5 @@ $(document).ready(function (){
         inputCode = inputCode.replace(/__name__/g, inputCount);
 
         fileInputWrapper.append(inputCode);
-    })
-
-    window.fixFileInputName = function (element) {
-        let fileName = $(element).val().split('\\').pop();
-        $(element).next('.custom-file-label').html(fileName);
     }
 })

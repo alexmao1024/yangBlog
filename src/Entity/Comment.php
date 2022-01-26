@@ -3,13 +3,20 @@
 namespace App\Entity;
 
 use App\Repository\CommentRepository;
+use App\Utils\DateTimeTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CommentRepository::class)]
+#[ORM\HasLifecycleCallbacks]
+#[ORM\EntityListeners(['App\Listener\CommentListener'])]
+#[Assert\EnableAutoMapping]
 class Comment
 {
+    use DateTimeTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
@@ -24,26 +31,21 @@ class Comment
     #[ORM\Column(type: 'text', nullable: true)]
     private $message;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
-    private $createAt;
-
-    #[ORM\Column(type: 'datetime', nullable: true)]
-    private $updateAt;
-
     #[ORM\ManyToOne(targetEntity: Post::class, inversedBy: 'comments')]
     #[ORM\JoinColumn(nullable: true)]
     private $post;
 
     #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children')]
+    #[ORM\JoinColumn(nullable: true,onDelete: 'SET NULL')]
     private $parent;
 
-    #[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class, cascade: ['remove'])]
+    #[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class)]
     private $children;
 
     #[ORM\Column(type: 'integer')]
     private $level = 1;
 
-    #[ORM\ManyToMany(targetEntity: FileManaged::class)]
+    #[ORM\ManyToMany(targetEntity: FileManaged::class,cascade: ['persist'])]
     #[ORM\JoinTable(name: 'comments_files')]
     #[ORM\JoinColumn(name: "comment_id", referencedColumnName: "id")]
     #[ORM\InverseJoinColumn(name: "file_id", referencedColumnName: "id",unique: true)]
@@ -96,30 +98,6 @@ class Comment
         return $this;
     }
 
-    public function getCreateAt(): ?\DateTimeInterface
-    {
-        return $this->createAt;
-    }
-
-    public function setCreateAt(?\DateTimeInterface $createAt): self
-    {
-        $this->createAt = $createAt;
-
-        return $this;
-    }
-
-    public function getUpdateAt(): ?\DateTimeInterface
-    {
-        return $this->updateAt;
-    }
-
-    public function setUpdateAt(?\DateTimeInterface $updateAt): self
-    {
-        $this->updateAt = $updateAt;
-
-        return $this;
-    }
-
     public function getPost(): ?Post
     {
         return $this->post;
@@ -132,7 +110,7 @@ class Comment
         return $this;
     }
 
-    public function getParent(): self
+    public function getParent()
     {
         return $this->parent;
     }
@@ -147,27 +125,27 @@ class Comment
     /**
      * @return Collection|self[]
      */
-    public function getComments(): Collection
+    public function getChildren(): Collection
     {
         return $this->children;
     }
 
-    public function addComment(self $comment): self
+    public function addChild(self $child): self
     {
-        if (!$this->children->contains($comment)) {
-            $this->children[] = $comment;
-            $comment->setParent($this);
+        if (!$this->children->contains($child)) {
+            $this->children[] = $child;
+            $child->setParent($this);
         }
 
         return $this;
     }
 
-    public function removeComment(self $comment): self
+    public function removeChild(self $child): self
     {
-        if ($this->children->removeElement($comment)) {
+        if ($this->children->removeElement($child)) {
             // set the owning side to null (unless already changed)
-            if ($comment->getParent() === $this) {
-                $comment->setParent(null);
+            if ($child->getParent() === $this) {
+                $child->setParent(null);
             }
         }
 

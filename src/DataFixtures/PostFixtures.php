@@ -2,12 +2,14 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\User;
 use App\Factory\PostFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 
-class PostFixtures extends Fixture
+class PostFixtures extends Fixture implements DependentFixtureInterface
 {
     public const LAST_POST = 'last_post';
     private PostFactory $postFactory;
@@ -21,6 +23,12 @@ class PostFixtures extends Fixture
 
     public function load(ObjectManager $manager,): void
     {
+        $userRepo = $manager->getRepository(User::class);
+        $editor = $userRepo->findOneBy(['username' => 'editor']);
+        $simpleAdmin = $userRepo->findOneBy(['username' => 'simpleAdmin']);
+        $admin = $userRepo->findOneBy(['username' => 'admin']);
+        $userArray = [$editor,$simpleAdmin,$admin];
+
         $last_post = null;
         for ($i=0;$i<20;$i++)
         {
@@ -37,11 +45,20 @@ class PostFixtures extends Fixture
                 $post->setStatus('published');
                 $last_post = $post;
             }
+            $authorRandIndex = array_rand($userArray);
+            $post->setAuthor($userArray[$authorRandIndex]);
 
             $manager->persist($post);
         }
 
         $this->addReference(self::LAST_POST,$last_post);
         $manager->flush();
+    }
+
+    public function getDependencies()
+    {
+        return [
+            UserFixtures::class
+        ];
     }
 }

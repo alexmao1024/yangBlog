@@ -25,6 +25,7 @@ class CommentRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('c')
             ->andWhere('c.post = :post')
+            ->andWhere('c.level = 1')
             ->setParameter('post', $post)
             ->orderBy('c.id', 'DESC')
             ->getQuery();

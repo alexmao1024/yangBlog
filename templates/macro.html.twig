@@ -5,8 +5,13 @@
         <div class="media-body">
             <h5 class="mt-0">{{ comment.author }}</h5>
             {{ comment.message }}
-            <button class="btn btn-sm btn-link js-reply-comment-btn" data-post-id="{{ post.id }}" data-parent-id="{{ comment.id }}">回复</button>
-            {% for childrenComment in comment.comments %}
+            {% for file in comment.files %}
+                <a href="{{ asset(file.path) }}" data-lightbox="{{ comment.id }}">
+                    <img src="{{ asset(file.path)|imagine_filter('my_thumb') }}" alt="{{ file.originName }}" class="img-thumbnail">
+                </a>
+            {% endfor %}
+            <button class="btn btn-sm btn-link js-reply-comment-btn" data-post-id="{{ post.id }}" data-parent-id="{{ comment.id }}">{{ 'reply'|trans }}</button>
+            {% for childrenComment in comment.children %}
                 {{ macro.show_comments(childrenComment,post) }}
             {% endfor %}
         </div>

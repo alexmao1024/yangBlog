@@ -3,9 +3,13 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Post;
+use App\Security\Voter\PostVoter;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
@@ -34,6 +38,7 @@ class PostCrudController extends AbstractCrudController
 
             TextareaField::new('summary'),
             TextEditorField::new('body'),
+            AssociationField::new('author')->onlyOnIndex(),
             ChoiceField::new('status')
                 ->setChoices(fn () => ['draft' => 'draft','published' => 'published']),
             TimeField::new('createAt')->setFormat('Y-MM-dd HH:mm:ss')->onlyOnIndex(),
@@ -51,5 +56,18 @@ class PostCrudController extends AbstractCrudController
     public function configureFilters(Filters $filters): Filters
     {
         return $filters->add(ChoiceFilter::new('status')->setChoices(['draft'=>'draft','published'=>'published']));
+    }
+
+    public function configureActions(Actions $actions): Actions
+    {
+        return $actions
+            ->update(Crud::PAGE_INDEX,Action::EDIT,
+                function (Action $action) {
+                    return $action->displayIf(fn($entity) => $this->isGranted(PostVoter::POST_OWNER_EDITOR, $entity));
+                })
+            ->update(Crud::PAGE_INDEX,Action::DELETE,
+                function (Action $action) {
+                    return $action->displayIf(fn($entity) => $this->isGranted(PostVoter::POST_OWNER_DELETE, $entity));
+                });
     }
 }

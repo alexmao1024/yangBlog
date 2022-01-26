@@ -4,16 +4,20 @@ namespace App\Controller;
 
 use App\Entity\Comment;
 use App\Entity\Post;
+use App\Event\AfterCommentSubmitEvent;
 use App\Form\CommentType;
 use App\Repository\PostRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-class PostController extends AbstractController
+
+#[Route('/{_locale<%support_locales%>}')]
+class PostController extends BaseController
 {
     #[Route('/', name: 'post_index', methods: ['GET'])]
     public function index(Request $request,PostRepository $postRepository): Response
@@ -32,7 +36,10 @@ class PostController extends AbstractController
 
 
     #[Route('/post/{id}', name: 'post_show', methods: ['GET','POST'])]
-    public function show(Request $request, Post $post,EntityManagerInterface $entityManager,PaginatorInterface $paginator): Response
+    public function show(Request $request, Post $post, EntityManagerInterface $entityManager,
+                         PaginatorInterface $paginator, EventDispatcherInterface $eventDispatcher,
+                         TranslatorInterface $translator
+                        ): Response
     {
         $commentForm = $this->createForm(CommentType::class);
 
@@ -42,10 +49,16 @@ class PostController extends AbstractController
         {
             /**@var Comment $data**/
             $data = $commentForm->getData();
+
+            $event = new AfterCommentSubmitEvent($data);
+            /**@var AfterCommentSubmitEvent $modifiedEvent**/
+            $modifiedEvent = $eventDispatcher->dispatch($event);
+            $data = $modifiedEvent->getSubject();
+
             $data->setPost($post);
             $entityManager->persist($data);
             $entityManager->flush();
-            $this->addFlash('success','您的评论已经成功提交！');
+            $this->addFlashMessages('success',$translator->trans('comment_submit_message'),['%name%'=>$data->getAuthor()]);
         }
 
 
