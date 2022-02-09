@@ -51,6 +51,9 @@ class Comment
     #[ORM\InverseJoinColumn(name: "file_id", referencedColumnName: "id",unique: true)]
     private $files;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $status;
+
     public function __construct()
     {
         $this->children = new ArrayCollection();
@@ -184,6 +187,18 @@ class Comment
     public function removeFile(FileManaged $file): self
     {
         $this->files->removeElement($file);
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?string $status,$context = []): self
+    {
+        $this->status = $status;
 
         return $this;
     }

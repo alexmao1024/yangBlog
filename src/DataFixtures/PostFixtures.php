@@ -35,14 +35,14 @@ class PostFixtures extends Fixture implements DependentFixtureInterface
             $post = $this->postFactory->create($this->faker->sentence(), $this->faker->paragraph());
             if ($this->faker->boolean())
             {
-                $post->setStatus('published');
+                $post->setStatus(['published'=>1]);
             }
 
             $image = '00'.$this->faker->randomDigit().'.jpg';
             $post->setPostImage($image);
 
             if ($i == 19){
-                $post->setStatus('published');
+                $post->setStatus(['published'=>1]);
                 $last_post = $post;
             }
             $authorRandIndex = array_rand($userArray);

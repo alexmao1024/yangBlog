@@ -1,0 +1,67 @@
+framework:
+    workflows:
+        comment_check:
+            type: 'state_machine' #or 'workflow'
+            audit_trail:
+                enabled: true
+            marking_store:
+                type: 'method'
+                property: 'status'
+            supports:
+                - App\Entity\Comment
+            initial_marking: new
+            places:
+                - new
+                - checking
+                - edit
+                - rejected
+                - approved
+            transitions:
+                start_check:
+                    from: new
+                    to: checking
+                check_rejected:
+                    from: checking
+                    to : rejected
+                re_edit:
+                    from: rejected
+                    to: edit
+                re_check:
+                    from: edit
+                    to : checking
+                check_approved:
+                    from: checking
+                    to: approved
+
+        blog_publishing:
+            type: 'workflow' #or 'state_machine'
+            audit_trail:
+                enabled: true
+            marking_store:
+                type: 'method'
+                property: 'status'
+            supports:
+                - App\Entity\Post
+            initial_marking: draft
+            places:
+                - draft
+                - wait_for_review
+                - wait_for_check
+                - approved_by_editor
+                - approved_by_checker
+                - published
+            transitions:
+                review_request:
+                    from: draft
+                    to: [wait_for_review,wait_for_check]
+                editor_review:
+                    guard: 'is_granted(''ROLE_EDITOR'')'
+                    from: wait_for_review
+                    to: approved_by_editor
+                checker_check:
+                    guard: 'is_granted(''ROLE_CHECKER'')'
+                    from: wait_for_check
+                    to: approved_by_checker
+                published:
+                    from: [approved_by_editor,approved_by_checker]
+                    to: published
